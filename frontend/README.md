@@ -1,16 +1,43 @@
-# React + Vite
+# 📝 Todo App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Laravel + MySQL + Dockerで構築したSPA Todoアプリです。
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 使用技術
 
-## React Compiler
+- React (Vite)
+- Laravel 12
+- MySQL 8
+- Docker
+- Git / GitHub
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 📦 主な機能
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Todo追加 / 削除 / 編集
+- 完了ステータス切替
+- カテゴリ追加
+- カテゴリ色分け
+- フィルタリング（検索 / ステータス / カテゴリ）
+
+---
+
+## 🏗 アーキテクチャ
+
+React (5173)
+↓
+Laravel API (8000)
+↓
+MySQL (Docker)
+
+---
+
+## 🔧 セットアップ方法
+
+```bash
+git clone https://github.com/masaharumoromizato-stack/Todo_List.git
+cd Todo_List
+docker compose up -d --build
+docker compose exec app php artisan migrate
