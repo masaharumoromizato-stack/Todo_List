@@ -1,6 +1,6 @@
 # 📝 Todo App
 
-React + Laravel + MySQL + Docker で構築したSPA（Single Page Application）型のTodoアプリです。
+React + Laravel + MySQL + Docker で構築したSPA型Todoアプリです。
 
 ---
 
@@ -27,60 +27,46 @@ React + Laravel + MySQL + Docker で構築したSPA（Single Page Application）
 
 # 📦 主な機能
 
-- Todo追加 / 削除 / 編集
+- Todo追加 / 削除
 - 完了ステータス切替
-- カテゴリ追加
-- カテゴリ別色分け表示
-- フィルタリング（検索 / ステータス / カテゴリ）
+- カテゴリ追加 / 削除
+- Todoにカテゴリ表示（色付きバッジ）
 
 ---
 
 # 🏗 システム構成
 
-```
-React (localhost:5173)
-        ↓
-Laravel API (localhost:8000)
-        ↓
+React (localhost:5173)  
+↓  
+Laravel API (localhost:8000)  
+↓  
 MySQL (Docker)
-```
+
 ---
 
-#  ディレクトリ構成
-
-```
+# 📁 ディレクトリ構成
 Todo_List/
-├── frontend/           # Reactアプリ
-├── src/                # Laravelアプリ
+├── frontend/ # Reactアプリ
+├── src/ # Laravelアプリ
 ├── docker-compose.yml
 ├── Dockerfile
 └── README.md
-```
+
 
 ---
 
-#  セットアップ手順（クリーン環境検証済み）
+# ⚙ セットアップ手順
 
 ## ① リポジトリ取得
 
 ```bash
 git clone https://github.com/masaharumoromizato-stack/Todo_List.git
 cd Todo_List
-```
 
----
-
-## ② Docker起動
-
-```bash
+② Docker起動
 docker compose up -d --build
-```
 
----
-
-## ③ Laravel初期設定
-
-```bash
+③ Laravel初期設定
 docker compose exec app bash
 cd src
 composer install
@@ -88,64 +74,36 @@ cp .env.example .env
 php artisan key:generate
 php artisan migrate
 exit
-```
-
----
-
-## ④ フロントエンド起動
-
-```bash
+④ フロントエンド起動
 cd frontend
 npm install
 npm run dev
-```
+🌐 アクセス
 
----
-
-# 🌐 アクセス
-
-Frontend  
+Frontend
 http://localhost:5173
 
-Backend API  
+Backend API
 http://localhost:8000/api/todos
 
----
+🧪 API一覧
+Todo
+Method	Endpoint	説明
+GET	/api/todos	一覧取得
+POST	/api/todos	作成
+PUT	/api/todos/{id}	完了切替
+DELETE	/api/todos/{id}	削除
+Category
+Method	Endpoint	説明
+GET	/api/categories	一覧取得
+POST	/api/categories	作成
+DELETE	/api/categories/{id}	削除
+🔀 開発フロー
 
-# 🧪 API一覧
+main：安定版
 
-## Todo
+develop：開発統合ブランチ
 
-| Method | Endpoint | 説明 |
-|--------|----------|------|
-| GET | /api/todos | 一覧取得 |
-| POST | /api/todos | 作成 |
-| PUT | /api/todos/{id} | 更新 |
-| DELETE | /api/todos/{id} | 削除 |
+feature/*：機能単位ブランチ
 
-## Category
-
-| Method | Endpoint | 説明 |
-|--------|----------|------|
-| GET | /api/categories | 一覧取得 |
-| POST | /api/categories | 作成 |
-
----
-
-#  開発フロー
-
-- main：安定版
-- develop：開発統合ブランチ
-- feature/*：機能単位ブランチ
-- Pull Requestベースでマージ
-
----
-
-#  今後の改善予定
-
-- backendではなくsrcでLaravelを作成したことが統一性なくなってしまった（反省点）
-- バリデーション強化
-- テストコード追加
-- CI導入
-
----
+Pull Requestベースでマージ
