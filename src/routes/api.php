@@ -10,3 +10,4 @@ Route::get('/todos', [TodoController::class, 'index']);
 Route::post('/todos', [TodoController::class, 'store']);
 Route::delete('/todos/{id}', [TodoController::class, 'destroy']);
 Route::put('/todos/{id}', [TodoController::class, 'toggle']);
+Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
