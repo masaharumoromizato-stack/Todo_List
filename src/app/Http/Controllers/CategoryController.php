@@ -16,4 +16,10 @@ class CategoryController extends Controller
     {
         return Category::create($request->all());
     }
+
+    public function destroy($id)
+    {
+        Category::destroy($id);
+        return response()->json(['message' => 'Deleted']);
+    }
 }
