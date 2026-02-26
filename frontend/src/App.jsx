@@ -8,25 +8,27 @@ function App() {
   const [categoryId, setCategoryId] = useState("");
   const [newCategory, setNewCategory] = useState("");
 
-  // Todo取得
   useEffect(() => {
-    fetch("http://localhost:8000/api/todos")
+    fetch("/api/todos")
       .then(res => res.json())
       .then(data => setTodos(data));
   }, []);
 
-  // Category取得
   useEffect(() => {
-    fetch("http://localhost:8000/api/categories")
+    fetch("/api/categories")
       .then(res => res.json())
       .then(data => setCategories(data));
   }, []);
 
-  // Todo追加
+  const getRandomColor = () => {
+    const colors = ["#ff6b6b", "#4ecdc4", "#ffe66d", "#667eea", "#ff9f1c"];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
   const addTodo = () => {
     if (!title.trim()) return;
 
-    fetch("http://localhost:8000/api/todos", {
+    fetch("/api/todos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -42,11 +44,10 @@ function App() {
       });
   };
 
-  // カテゴリ追加
   const addCategory = () => {
     if (!newCategory.trim()) return;
 
-    fetch("http://localhost:8000/api/categories", {
+    fetch("/api/categories", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -62,99 +63,133 @@ function App() {
   };
 
   const deleteTodo = (id) => {
-    fetch(`http://localhost:8000/api/todos/${id}`, {
-      method: "DELETE"
-    }).then(() => {
-      setTodos(prev => prev.filter(todo => todo.id !== id));
-    });
+    fetch(`/api/todos/${id}`, { method: "DELETE" })
+      .then(() =>
+        setTodos(prev => prev.filter(todo => todo.id !== id))
+      );
   };
 
   const toggleTodo = (id) => {
-    fetch(`http://localhost:8000/api/todos/${id}`, {
-      method: "PUT"
-    }).then(() => {
-      setTodos(prev =>
-        prev.map(todo =>
-          todo.id === id
-            ? { ...todo, is_completed: !todo.is_completed }
-            : todo
-        )
-      );
-    });
+    fetch(`/api/todos/${id}`, { method: "PUT" })
+      .then(res => res.json())
+      .then(updated => {
+        setTodos(prev =>
+          prev.map(todo =>
+            todo.id === id ? updated : todo
+          )
+        );
+      });
   };
 
-  // ランダム色生成
-  const getRandomColor = () => {
-    const colors = ["#ff6b6b", "#4ecdc4", "#ffe66d", "#667eea", "#ff9f1c"];
-    return colors[Math.floor(Math.random() * colors.length)];
+  const deleteCategory = (id) => {
+    if (!confirm("このカテゴリを削除しますか？")) return;
+
+    fetch(`/api/categories/${id}`, { method: "DELETE" })
+      .then(() => {
+        setCategories(prev => prev.filter(cat => cat.id !== id));
+        setTodos(prev =>
+          prev.map(todo =>
+            todo.category?.id === id
+              ? { ...todo, category: null }
+              : todo
+          )
+        );
+      });
   };
 
   return (
     <div className="app">
-      <div className="card">
-        <h1>✨ My Todo</h1>
+      <div className="container">
+        <h1>📝 My Todo App</h1>
 
-        {/* Todo入力エリア */}
-        <div className="input-area">
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="やることを入力..."
-          />
+        {/* ===== Todo追加 ===== */}
+        <div className="card">
+          <div className="input-row">
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="やることを入力..."
+            />
 
-          <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-          >
-            <option value="">カテゴリなし</option>
-            {categories.map(cat => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-
-          <button onClick={addTodo}>追加</button>
-        </div>
-
-        {/* カテゴリ追加エリア */}
-        <div className="category-area">
-          <input
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-            placeholder="カテゴリ追加..."
-          />
-          <button onClick={addCategory}>＋</button>
-        </div>
-
-        {/* Todo表示 */}
-        <ul>
-          {todos.map(todo => (
-            <li
-              key={todo.id}
-              className="todo-item"
-              style={{
-                borderLeft: `6px solid ${
-                  todo.category ? todo.category.color : "#ccc"
-                }`
-              }}
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
             >
-              <span
-                onClick={() => toggleTodo(todo.id)}
-                className={todo.is_completed ? "done" : ""}
-              >
-                {todo.title}
-              </span>
+              <option value="">カテゴリなし</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
 
-              <button
-                className="delete-btn"
-                onClick={() => deleteTodo(todo.id)}
-              >
-                ✖
-              </button>
-            </li>
-          ))}
-        </ul>
+            <button onClick={addTodo}>追加</button>
+          </div>
+        </div>
+
+        {/* ===== カテゴリ管理 ===== */}
+        <div className="card">
+          <h3>カテゴリ</h3>
+
+          <div className="category-input">
+            <input
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              placeholder="カテゴリ追加..."
+            />
+            <button onClick={addCategory}>＋</button>
+          </div>
+
+          <div className="category-list">
+            {categories.map(cat => (
+              <div key={cat.id} className="category-chip">
+                <span
+                  style={{ backgroundColor: cat.color }}
+                  className="color-dot"
+                />
+                {cat.name}
+                <button onClick={() => deleteCategory(cat.id)}>×</button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ===== Todo一覧 ===== */}
+        <div className="card">
+          <h3>Todo一覧</h3>
+          <ul className="todo-list">
+            {todos.map(todo => (
+              <li key={todo.id} className="todo-item">
+                <div
+                  className={`todo-title ${
+                    todo.is_completed ? "done" : ""
+                  }`}
+                  onClick={() => toggleTodo(todo.id)}
+                >
+                  {todo.title}
+                </div>
+
+                {todo.category && (
+                  <div
+                    className="category-badge"
+                    style={{
+                      backgroundColor: todo.category.color
+                    }}
+                  >
+                    {todo.category.name}
+                  </div>
+                )}
+
+                <button
+                  className="delete-btn"
+                  onClick={() => deleteTodo(todo.id)}
+                >
+                  ×
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
